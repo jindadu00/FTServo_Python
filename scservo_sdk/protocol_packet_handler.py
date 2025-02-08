@@ -143,7 +143,7 @@ class protocol_packet_handler(object):
 
         # tx packet
         self.portHandler.clearPort()
-        print('txpacket: ',txpacket)
+        # print('txpacket: ',txpacket)
         written_packet_length = self.portHandler.writePort(txpacket)
         if total_packet_length != written_packet_length:
             self.portHandler.is_using = False

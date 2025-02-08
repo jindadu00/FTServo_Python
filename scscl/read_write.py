@@ -66,7 +66,7 @@ while 1:
         print("%s" % packetHandler.getTxRxResult(scs_comm_result))
     if scs_error != 0:
         print("%s" % packetHandler.getRxPacketError(scs_error))
-    time.sleep(2)
+    # time.sleep(2)
     read(2048)# Read the status of the servo (ID1) until the servo runs to the target position
 
     # Servo (ID1) runs at a maximum speed of V=1500*0.059=88.5rpm until it reaches position P0=20
@@ -75,7 +75,7 @@ while 1:
         print("%s" % packetHandler.getTxRxResult(scs_comm_result))
     if scs_error != 0:
         print("%s" % packetHandler.getRxPacketError(scs_error))
-    time.sleep(2)
+    # time.sleep(2)
     read(1024)# Read the status of the servo (ID1) until the servo runs to the target position
 # Close port
 portHandler.closePort()

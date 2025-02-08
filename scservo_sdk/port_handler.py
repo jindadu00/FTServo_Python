@@ -60,7 +60,7 @@ class PortHandler(object):
             return [ord(ch) for ch in self.ser.read(length)]
 
     def writePort(self, packet):
-        print('packet (hex):', ' '.join(f'{byte:02X}' for byte in packet))
+        # print('packet (hex):', ' '.join(f'{byte:02X}' for byte in packet))
         return self.ser.write(packet)
 
     def setPacketTimeout(self, packet_length):
