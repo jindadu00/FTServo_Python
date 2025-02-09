@@ -11,19 +11,21 @@ import sys
 import os
 import time
 
-sys.path.append("..")
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
 from scservo_sdk import *                      # Uses FTServo SDK library
 
 
 # Initialize PortHandler instance
 # Set the port path
 # Get methods and members of PortHandlerLinux or PortHandlerWindows
-portHandler = PortHandler('/dev/ttyUSB0')# ex) Windows: "COM1"   Linux: "/dev/ttyUSB0" Mac: "/dev/tty.usbserial-*"
+portHandler = PortHandler('COM3')# ex) Windows: "COM1"   Linux: "/dev/ttyUSB0" Mac: "/dev/tty.usbserial-*"
 
 # Initialize PacketHandler instance
 # Get methods and members of Protocol
 packetHandler = sms_sts(portHandler)
-    
+
+IDLIST = [1, 2, 3]
+
 # Open port
 if portHandler.openPort():
     print("Succeeded to open the port")
@@ -38,11 +40,18 @@ else:
     print("Failed to change the baudrate")
     quit()
 
+
+
+for scs_id in IDLIST:
+    scs_comm_result, scs_error = packetHandler.ServoMode(scs_id)
+    if scs_comm_result != True:
+        print("[ID:%03d] groupSyncWrite addparam failed" % scs_id)
+
 while 1:
-    for scs_id in range(1, 11):
+    for scs_id in IDLIST:
         # Add servo(id)#1~10 goal position\moving speed\moving accc value to the Syncwrite parameter storage
         # Servo (ID1~10) runs at a maximum speed of V=60 * 0.732=43.92rpm and an acceleration of A=50 * 8.7deg/s ^ 2 until it reaches position P1=4095
-        scs_addparam_result = packetHandler.SyncWritePosEx(scs_id, 4095, 60, 50)
+        scs_addparam_result = packetHandler.SyncWritePosEx(scs_id, 3072, 3000, 0)
         if scs_addparam_result != True:
             print("[ID:%03d] groupSyncWrite addparam failed" % scs_id)
 
@@ -54,12 +63,12 @@ while 1:
     # Clear syncwrite parameter storage
     packetHandler.groupSyncWrite.clearParam()
 
-    time.sleep(((4095-0)/(60*50) + (60*50)/(50*100) + 0.05))#[(P1-P0)/(V*50)] + [(V*50)/(A*100)] + 0.05
+    time.sleep((3072-1024)/3000 + 0.5)
 
-    for scs_id in range(1, 11):
+    for scs_id in IDLIST:
         # Add servo#1~10 goal position\moving speed\moving accc value to the Syncwrite parameter storage
-        # Servo (ID1~10) runs at a maximum speed of V=60 * 0.732=43.92rpm and an acceleration of A=50 * 8.7deg/s ^ 2 until P0=0 position
-        scs_addparam_result = packetHandler.SyncWritePosEx(scs_id, 0, 60, 50)
+        # acceleration unit 100/s^2
+        scs_addparam_result = packetHandler.SyncWritePosEx(scs_id, 1024, 3000, 0)
         if scs_addparam_result != True:
             print("[ID:%03d] groupSyncWrite addparam failed" % scs_id)
 
@@ -71,7 +80,7 @@ while 1:
     # Clear syncwrite parameter storage
     packetHandler.groupSyncWrite.clearParam()
     
-    time.sleep(((4095-0)/(60*50) + (60*50)/(50*100) + 0.05))#[(P1-P0)/(V*50)] + [(V*50)/(A*100)] + 0.05
+    time.sleep((3072-1024)/3000 + 0.5)
 
 # Close port
 portHandler.closePort()

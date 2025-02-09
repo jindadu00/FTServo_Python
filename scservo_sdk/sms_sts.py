@@ -98,6 +98,9 @@ class sms_sts(protocol_packet_handler):
     def WheelMode(self, scs_id):
         return self.write1ByteTxRx(scs_id, SMS_STS_MODE, 1)
 
+    def ServoMode(self, scs_id):
+        return self.write1ByteTxRx(scs_id, SMS_STS_MODE, 0)
+
     def WriteSpec(self, scs_id, speed, acc):
         speed = self.scs_toscs(speed, 15)
         txpacket = [acc, 0, 0, 0, 0, self.scs_lobyte(speed), self.scs_hibyte(speed)]

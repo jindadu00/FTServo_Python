@@ -10,14 +10,15 @@
 import sys
 import os
 
-sys.path.append("..")
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
 from scservo_sdk import *                       # Uses SCServo SDK library
 
+IDLIST = [1, 2, 3]
 
 # Initialize PortHandler instance
 # Set the port path
 # Get methods and members of PortHandlerLinux or PortHandlerWindows
-portHandler = PortHandler('/dev/ttyUSB0')# ex) Windows: "COM1"   Linux: "/dev/ttyUSB0" Mac: "/dev/tty.usbserial-*"
+portHandler = PortHandler('COM3')# ex) Windows: "COM1"   Linux: "/dev/ttyUSB0" Mac: "/dev/tty.usbserial-*"
 
 # Initialize PacketHandler instance
 # Get methods and members of Protocol
@@ -41,7 +42,7 @@ else:
 groupSyncRead = GroupSyncRead(packetHandler, SMS_STS_PRESENT_POSITION_L, 4)
 
 while 1:
-    for scs_id in range(1, 11):
+    for scs_id in IDLIST:
         # Add parameter storage for SCServo#1~10 present position value
         scs_addparam_result = groupSyncRead.addParam(scs_id)
         if scs_addparam_result != True:
@@ -51,7 +52,7 @@ while 1:
     if scs_comm_result != COMM_SUCCESS:
         print("%s" % packetHandler.getTxRxResult(scs_comm_result))
 
-    for scs_id in range(1, 11):
+    for scs_id in IDLIST:
         # Check if groupsyncread data of SCServo#1~10 is available
         scs_data_result, scs_error = groupSyncRead.isAvailable(scs_id, SMS_STS_PRESENT_POSITION_L, 4)
         if scs_data_result == True:

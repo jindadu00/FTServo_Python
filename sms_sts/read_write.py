@@ -11,10 +11,11 @@ import sys
 import os
 import time
 
-sys.path.append("..")
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
 from scservo_sdk import *                      # Uses FTServo SDK library
 
-
+SCS_ID = 1
+scs_goal_position = 4095
 def read():
     while 1:
         # Read the current position of servo(ID1)
@@ -22,7 +23,7 @@ def read():
         if scs_comm_result != COMM_SUCCESS:
             print(packetHandler.getTxRxResult(scs_comm_result))
         else:
-            print("[ID:%03d] GoalPos:%d PresPos:%d PresSpd:%d" % (SCS_ID, scs_goal_position[index], scs_present_position, scs_present_speed))
+            print("[ID:%03d] GoalPos:%d PresPos:%d PresSpd:%d" % (SCS_ID, scs_goal_position, scs_present_position, scs_present_speed))
         if scs_error != 0:
             print(packetHandler.getRxPacketError(scs_error))
 
@@ -38,7 +39,7 @@ def read():
 # Initialize PortHandler instance
 # Set the port path
 # Get methods and members of PortHandlerLinux or PortHandlerWindows
-portHandler = PortHandler('/dev/ttyUSB0')# ex) Windows: "COM1"   Linux: "/dev/ttyUSB0" Mac: "/dev/tty.usbserial-*"
+portHandler = PortHandler('COM3')# ex) Windows: "COM1"   Linux: "/dev/ttyUSB0" Mac: "/dev/tty.usbserial-*"
 
 # Initialize PacketHandler instance
 # Get methods and members of Protocol
@@ -60,7 +61,7 @@ else:
 
 while 1:
     # Servo (ID1) runs at a maximum speed of V=60 * 0.732=43.92rpm and an acceleration of A=50 * 8.7deg/s ^ 2 until it reaches position P1=4095
-    scs_comm_result, scs_error = packetHandler.WritePosEx(1, 4095, 60, 50)
+    scs_comm_result, scs_error = packetHandler.WritePosEx(1, scs_goal_position, 0, 100)
     if scs_comm_result != COMM_SUCCESS:
         print("%s" % packetHandler.getTxRxResult(scs_comm_result))
     elif scs_error != 0:
@@ -69,7 +70,7 @@ while 1:
     read()# Read the status of the servo (ID1) until the servo runs to the target position
     
     # Servo (ID1) runs at a maximum speed of V=60 * 0.732=43.92rpm and an acceleration of A=50 * 8.7deg/s ^ 2 until P0=0 position
-    scs_comm_result, scs_error = packetHandler.WritePosEx(1, 0, 60, 50)
+    scs_comm_result, scs_error = packetHandler.WritePosEx(1, 0, 0, 100)
     if scs_comm_result != COMM_SUCCESS:
         print("%s" % packetHandler.getTxRxResult(scs_comm_result))
     elif scs_error != 0:

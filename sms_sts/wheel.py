@@ -11,14 +11,14 @@ import sys
 import os
 import time
 
-sys.path.append("..")
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
 from scservo_sdk import *                      # Uses FTServo SDK library
 
 
 # Initialize PortHandler instance
 # Set the port path
 # Get methods and members of PortHandlerLinux or PortHandlerWindows
-portHandler = PortHandler('/dev/ttyUSB0')# ex) Windows: "COM1"   Linux: "/dev/ttyUSB0" Mac: "/dev/tty.usbserial-*"
+portHandler = PortHandler('COM3')# ex) Windows: "COM1"   Linux: "/dev/ttyUSB0" Mac: "/dev/tty.usbserial-*"
 
 # Initialize PacketHandler instance
 # Get methods and members of Protocol
@@ -46,13 +46,13 @@ elif scs_error != 0:
 
 while 1:
     # Servo (ID1) accelerates to a maximum speed of V=60 * 0.732=43.92rpm at an acceleration of A=50 * 8.7deg/s ^ 2, forward rotation
-    scs_comm_result, scs_error = packetHandler.WriteSpec(1, 60, 50)
+    scs_comm_result, scs_error = packetHandler.WriteSpec(1, 600, 50)
     if scs_comm_result != COMM_SUCCESS:
         print("%s" % packetHandler.getTxRxResult(scs_comm_result))
     if scs_error != 0:
         print("%s" % packetHandler.getRxPacketError(scs_error))
 
-    time.sleep(5);
+    time.sleep(5)
 
     # Servo (ID1) decelerates to speed 0 and stops rotating at an acceleration of A=50 * 8.7deg/s ^ 2
     scs_comm_result, scs_error = packetHandler.WriteSpec(1, 0, 50)
@@ -61,16 +61,16 @@ while 1:
     if scs_error != 0:
         print("%s" % packetHandler.getRxPacketError(scs_error))
 
-    time.sleep(2);
+    time.sleep(2)
 
      # Servo (ID1/ID2) accelerates to a maximum speed of V=-60 * 0.732=-43.92rpm with an acceleration of A=50 * 8.7deg/s ^ 2, reverse rotation
-    scs_comm_result, scs_error = packetHandler.WriteSpec(1, -50, 50)
+    scs_comm_result, scs_error = packetHandler.WriteSpec(1, -500, 50)
     if scs_comm_result != COMM_SUCCESS:
         print("%s" % packetHandler.getTxRxResult(scs_comm_result))
     if scs_error != 0:
         print("%s" % packetHandler.getRxPacketError(scs_error))
 
-    time.sleep(5);
+    time.sleep(5)
 
     # Servo (ID1) decelerates to speed 0 and stops rotating at an acceleration of A=50 * 8.7deg/s ^ 2
     scs_comm_result, scs_error = packetHandler.WriteSpec(1, 0, 50)
@@ -79,7 +79,7 @@ while 1:
     if scs_error != 0:
         print("%s" % packetHandler.getRxPacketError(scs_error))
 
-    time.sleep(2);
+    time.sleep(2)
     
 # Close port
 portHandler.closePort()
