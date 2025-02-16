@@ -51,7 +51,7 @@ while 1:
     for scs_id in IDLIST:
         # Add servo(id)#1~10 goal position\moving speed\moving accc value to the Syncwrite parameter storage
         # Servo (ID1~10) runs at a maximum speed of V=60 * 0.732=43.92rpm and an acceleration of A=50 * 8.7deg/s ^ 2 until it reaches position P1=4095
-        scs_addparam_result = packetHandler.SyncWritePosEx(scs_id, 3072, 3000, 0)
+        scs_addparam_result = packetHandler.SyncWritePosEx(scs_id, 3072-256, 0, 0)
         if scs_addparam_result != True:
             print("[ID:%03d] groupSyncWrite addparam failed" % scs_id)
 
@@ -63,12 +63,12 @@ while 1:
     # Clear syncwrite parameter storage
     packetHandler.groupSyncWrite.clearParam()
 
-    time.sleep((3072-1024)/3000 + 0.5)
+    time.sleep(3)
 
     for scs_id in IDLIST:
         # Add servo#1~10 goal position\moving speed\moving accc value to the Syncwrite parameter storage
         # acceleration unit 100/s^2
-        scs_addparam_result = packetHandler.SyncWritePosEx(scs_id, 1024, 3000, 0)
+        scs_addparam_result = packetHandler.SyncWritePosEx(scs_id, 1024+256, 0, 0)
         if scs_addparam_result != True:
             print("[ID:%03d] groupSyncWrite addparam failed" % scs_id)
 
@@ -80,7 +80,7 @@ while 1:
     # Clear syncwrite parameter storage
     packetHandler.groupSyncWrite.clearParam()
     
-    time.sleep((3072-1024)/3000 + 0.5)
+    time.sleep(3)
 
 # Close port
 portHandler.closePort()
